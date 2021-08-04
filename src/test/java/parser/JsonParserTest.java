@@ -1,6 +1,7 @@
 package parser;
 
 import com.google.gson.Gson;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class JsonParserTest {
-    private static final String CART_NAME = "test-cart";
+    private static final String CART_NAME = RandomStringUtils.randomAlphabetic(10);
     private static final String REAL_ITEM_NAME = "KASHKAI";
     private static final double REAL_ITEM_PRICE = 1000.0;
     private static final double REAL_ITEM_WEIGHT = 1420;
@@ -67,7 +68,6 @@ class JsonParserTest {
 
         parser.writeToFile(testCart);
 
-        // Cart exp = parser.readFromFile(new File("src/main/resources/" + CART_NAME + ".json"));
         Gson gson = new Gson();
         Reader reader = Files.newBufferedReader(Paths.get("src/main/resources/" + CART_NAME + ".json"));
         Cart exp = gson.fromJson(reader, Cart.class);
@@ -77,21 +77,24 @@ class JsonParserTest {
 
     @Test
     void readFromFile() {
-        Parser parser = new JsonParser();
-        Cart expectedCart = parser.readFromFile(new File("src/main/resources/" + CART_NAME + ".json"));
+        Cart testCartTwo = new Cart(CART_NAME);
 
-        assertEquals(testCart, expectedCart);
+        Parser parser = new JsonParser();
+        parser.writeToFile(testCartTwo);
+
+        Cart expectedCart = parser.readFromFile(new File("src/main/resources/" + testCartTwo.getCartName() + ".json"));
+
+        assertEquals(testCartTwo, expectedCart);
     }
 
 
     @ParameterizedTest
     @MethodSource
     void readFromFileException(File file) {
-
         Parser parser = new JsonParser();
 
         Exception exception = Assertions.assertThrows(NoSuchFileException.class,
-                () -> parser.readFromFile(new File(String.valueOf(file))));
+                () -> parser.readFromFile(file));
         assertEquals(String.format("File %s.json not found!", file), exception.getMessage());
 
     }
@@ -103,5 +106,4 @@ class JsonParserTest {
                 new File("src/main/resources/user-cart.log"),
                 new File("src/main/resources/.json"));
     }
-
 }
