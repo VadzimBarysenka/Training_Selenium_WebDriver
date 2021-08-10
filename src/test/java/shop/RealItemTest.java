@@ -5,11 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RealItemTest {
-
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
     private final PrintStream originalOut = System.out;
@@ -35,7 +33,6 @@ class RealItemTest {
         car.setWeight(5);
 
         System.out.print(car);
-        assertEquals("Class: class shop.RealItem; Name: " + car.getName() + "; " + "Price: " + car.getPrice() + "; " + "Weight: " + car.getWeight(), outContent.toString());
+        assertEquals("Class: " + car.getClass() + "; " + "Name: " + car.getName() + "; " + "Price: " + car.getPrice() + "; " + "Weight: " + car.getWeight(), outContent.toString());
     }
-
 }

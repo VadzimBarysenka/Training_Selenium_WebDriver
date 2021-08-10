@@ -11,8 +11,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import shop.Cart;
 import shop.RealItem;
 import shop.VirtualItem;
-
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.FileSystems;
@@ -20,7 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
@@ -61,7 +60,6 @@ class JsonParserTest {
         }
     }
 
-
     @Test
     void writeToFile() throws IOException {
         Parser parser = new JsonParser();
@@ -78,15 +76,19 @@ class JsonParserTest {
     @Test
     void readFromFile() {
         Cart testCartTwo = new Cart(CART_NAME);
-
+        Gson gson = new Gson();
         Parser parser = new JsonParser();
-        parser.writeToFile(testCartTwo);
+
+        try (FileWriter writer = new FileWriter("src/main/resources/" + testCartTwo.getCartName() + ".json")) {
+            writer.write(gson.toJson(testCartTwo));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Cart expectedCart = parser.readFromFile(new File("src/main/resources/" + testCartTwo.getCartName() + ".json"));
 
         assertEquals(testCartTwo, expectedCart);
     }
-
 
     @ParameterizedTest
     @MethodSource
@@ -95,8 +97,8 @@ class JsonParserTest {
 
         Exception exception = Assertions.assertThrows(NoSuchFileException.class,
                 () -> parser.readFromFile(file));
-        assertEquals(String.format("File %s.json not found!", file), exception.getMessage());
 
+        assertEquals(String.format("File %s.json not found!", file), exception.getMessage());
     }
 
     static Stream<File> readFromFileException() {

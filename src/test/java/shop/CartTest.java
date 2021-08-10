@@ -3,9 +3,7 @@ package shop;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.testng.Assert;
 
 class CartTest {
     private static final String CART_NAME = RandomStringUtils.randomAlphabetic(10);
@@ -15,13 +13,15 @@ class CartTest {
     private static final String VIRTUAL_ITEM_NAME = "OpenSUSE";
     private static final double VIRTUAL_ITEM_PRICE = 0.1;
     private static final double VIRTUAL_ITEM_SIZE_ON_DISK = 40000;
+    private static final double TAX = 0.2;
     Cart testCart = null;
+    RealItem car = null;
 
     @BeforeEach
     void setUp() {
         testCart = new Cart(CART_NAME);
 
-        RealItem car = new RealItem();
+        car = new RealItem();
         car.setName(REAL_ITEM_NAME);
         car.setPrice(REAL_ITEM_PRICE);
         car.setWeight(REAL_ITEM_WEIGHT);
@@ -31,24 +31,15 @@ class CartTest {
 
     @Test
     void deleteRealItem() {
-        RealItem car = new RealItem();
-
         testCart.deleteRealItem(car);
 
-        assertEquals(testCart.getTotalPrice(), 0.0);
+        Assert.assertEquals(testCart.getTotalPrice(), 0.0);
     }
 
     @Test
     void getTotalPrice() {
-        Cart testCartTwo = new Cart(CART_NAME);
-        RealItem car = new RealItem();
-        car.setPrice(REAL_ITEM_PRICE);
+        double  actualTotal = car.getPrice() + car.getPrice()*TAX;
 
-        VirtualItem disk = new VirtualItem();
-        disk.setPrice(VIRTUAL_ITEM_PRICE);
-
-        testCartTwo.addRealItem(car);
-
-        assertEquals(testCart.getTotalPrice(), testCartTwo.getTotalPrice());
+        Assert.assertEquals(testCart.getTotalPrice(), actualTotal);
     }
 }
